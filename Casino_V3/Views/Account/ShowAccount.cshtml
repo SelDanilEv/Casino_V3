@@ -1,0 +1,14 @@
+﻿@{
+    ViewBag.Title = "Account";
+    Layout = "_Layout";
+}
+
+@model AccountShowAccountViewModel
+
+<div>
+    <h2>Welcome @Model.user.Name</h2>
+    <h2>Cash @Model.user.Cash</h2>
+    <form>
+        <button style="margin-left:10px" asp-action="Log_out">Log out</button>
+    </form>
+</div>
