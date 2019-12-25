@@ -9,12 +9,12 @@ namespace Casino_V3
 {
     public static class DataBase
     {
-        public static List<User> ActivUsers = new List<User>();
+        public static List<Player> ActivPlayers = new List<Player>();
 
-        private static DataContractJsonSerializer xmlformatter = new DataContractJsonSerializer(typeof(List<User>));
+        private static DataContractJsonSerializer xmlformatter = new DataContractJsonSerializer(typeof(List<Player>));
 
 
-        public static void Serialize(string path, List<User> users)
+        public static void Serialize(string path, List<Player> users)
         {
             using (FileStream fs = new FileStream(path + ".json", FileMode.OpenOrCreate))
             {
@@ -22,28 +22,28 @@ namespace Casino_V3
             }
         }
 
-        public static void DeSerialize(string path, ref List<User> users)
+        public static void DeSerialize(string path, ref List<Player> users)
         {
             using (FileStream fs = new FileStream(path + ".json", FileMode.Open))
             {
-                users = (List<User>)xmlformatter.ReadObject(fs);
+                users = (List<Player>)xmlformatter.ReadObject(fs);
             }
         }
 
-        public static bool AddUser(User user)
+        public static bool AddPlayer(Player user)
         {
             if (user.Name == null || user.Password == null)
                 return false;
             if (user.Name[0] == ' ' || user.Password[0] == ' ')
                 return false;
 
-            IEnumerable<User> Check_Names = from us in ActivUsers
+            IEnumerable<Player> Check_Names = from us in ActivPlayers
                                             where us.Name == user.Name
                                             select us;
             if (Check_Names.Count() == 0)
             {
-                user.Id = ActivUsers.Count();
-                ActivUsers.Add(user);
+                user.Id = ActivPlayers.Count();
+                ActivPlayers.Add(user);
                 return true;
             }
             return false;
@@ -52,7 +52,7 @@ namespace Casino_V3
         public static int Authorization(string name, string password)    //will be change on linq
         {
             int id = -2;
-            foreach (User user in ActivUsers)
+            foreach (Player user in ActivPlayers)
             {
                 if (user.Name == name)
                 {

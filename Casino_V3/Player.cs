@@ -6,16 +6,17 @@ using System.Threading.Tasks;
 namespace Casino_V3
 {
     [Serializable]
-    public class User
+    public class Player
     {
-        public User(string name, string password, int cash)
+        public Player(string name, string password, int cash)
         {
             Name = name;
             Password = password;
             Cash = cash;
+            TypeOfRate = TypeRate.noth;
         }
 
-        public User() { CorrectTransition = false; }
+        public Player() { }
 
         public int Id { get; set; }
         public string Name { get; set; }
@@ -26,7 +27,22 @@ namespace Casino_V3
         [NonSerialized]
         public bool CorrectTransition;
 
+
         public TypeRate TypeOfRate { get; set; }
+
+        public enum ColorRate : int
+        {
+            black = 0,
+            white
+        }
+
+        public enum SectorRate : int
+        {
+            sector1_8 = 0,
+            sector9_16,
+            sector17_24,
+            sector25_32,
+        }
 
         public enum TypeRate : int
         {

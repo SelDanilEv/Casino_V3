@@ -7,7 +7,7 @@ namespace Casino_V3
 {
     public static class BindClass
     {
-        public static int? userId;
+        public static int? playerId;
         public static string bufferstring;
         public static string bufferint;
     }

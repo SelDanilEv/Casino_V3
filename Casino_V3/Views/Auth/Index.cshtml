@@ -6,21 +6,23 @@
 @model AuthIndexViewModel
 
 
-
 <form style="
-    margin-left: 15%;
      font-size:x-large;
-     display: flex;
-     align-items: center;
-     justify-content: center
+     display:flex;
+     min-width:1100px;
+     min-width:1500px;
+     position:fixed;
+     left:50%;
+     transform: translateX(-15%);
     ">
     <table style="width:50%;">
         <tr><td style="color:blueviolet;padding-left:10px">Enter Name and password </td></tr>
         <tr><td style="font-display:block;font-size:2px"> <br /></td></tr>
         <tr>
             <td>
-                <input style="width:60%;background-color:dimgray;color:azure" type="text" placeholder="Name" name="username" />
-                <div style="position:page;">
+                <input style="font-size:25px;width:60%;background-color:dimgray;color:azure" type="text" placeholder="Name" name="playername" />
+                <div style="font-display:block;font-size:2px"> <br /></div>
+                <div style="position:static;">
                     @if (Model.Message != "")
                     {
                         @Model.Message
@@ -30,13 +32,13 @@
         </tr>
         <tr><td style="font-display:block;font-size:1px"> <br /></td></tr>
         <tr>
-            <td><input style="width:60%;background-color:dimgray;color:azure" type="password" placeholder="Password" name="password" /></td>
+            <td><input style="font-size:25px;width:60%;background-color:dimgray;color:azure" type="password" placeholder="Password" name="password" /></td>
         </tr>
         <tr><td style="font-display:block;font-size:5px"> <br /></td></tr>
         <tr>
             <td>
-                <button style="width:25%;margin-left:3%;background-color:dimgray;color:azure" asp-action="Log_in" asp-route-username="username" asp-route-password="password">Log in</button>
-                <button style="width:25%;margin-left:5%;background-color:dimgrey;color:azure" asp-action="Log_on" asp-route-username="username" asp-route-password="password">Registrate</button>
+                <button style="font-size:25px;width:25%;margin-left:3%;background-color:dimgray;color:azure" asp-action="Log_in" asp-route-playername="playername" asp-route-password="password">Log in</button>
+                <button style="font-size:25px;width:25%;margin-left:5%;background-color:dimgrey;color:azure" asp-action="Log_on" asp-route-playername="playername" asp-route-password="password">Registrate</button>
             </td>
         </tr>
     </table>

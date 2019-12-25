@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Account";
+    Layout = "_Layout";
+}
+
+@model AccountStartViewModel
+
+<form style="
+     position:fixed;
+     left:50%;
+     transform: translateX(-45%);
+     ">
+    <div>
+        @switch ((int)Model.player.TypeOfRate)
+        {
+            case 1:
+                <div>Your rate is zero</div>
+                break;
+            case 2:
+                <div>Choose option</div>
+                <select name="Rate">
+                    <option disabled>Choose color</option>
+                    <option value=0>Black</option>
+                    <option value=1>White</option>
+                </select>
+                break;
+            case 3:
+                <div>Choose option</div>
+                <select name="Rate">
+                    <option disabled>Choose sector</option>
+                    <option value=0>1-8</option>
+                    <option value=1>9-16</option>
+                    <option value=2>17-24</option>
+                    <option value=3>25-32</option>
+                </select>
+                break;
+        }
+    </div>
+    <div>@Model.Message</div>
+    <button style="margin-left:10px" asp-action="ConfirmRate">Confirm</button>
+    <button style="margin-left:10px" asp-action="Cancel">Cancel</button>
+</form>

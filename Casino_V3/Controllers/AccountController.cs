@@ -10,29 +10,75 @@ namespace Casino_V3.Controllers
 {
     public class AccountController : Controller
     {
-        private static AccountShowAccountViewModel obj = new AccountShowAccountViewModel();
+        private static AccountShowAccountViewModel objShowAccount;
+        private static AccountStartViewModel objStart;
 
-        public int? UserId;
+        public int? PlayerId;
 
         public IActionResult ShowAccount()
         {
-            UserId = BindClass.userId;
-            BindClass.userId = null;
-            if (UserId != null)
+            PlayerId = BindClass.playerId;
+            BindClass.playerId = null;
+
+            if (PlayerId != null)
             {
-                obj.user = DataBase.ActivUsers[(int)UserId];
+                objShowAccount = new AccountShowAccountViewModel();
+                objShowAccount.player = DataBase.ActivPlayers[(int)PlayerId];
             }
             else
             {
-                return RedirectToActionPermanent("Log_out", "Account");
+                if (objShowAccount == null)
+                    return RedirectToActionPermanent("Log_out", "Account");
             }
-            return View(obj);
+            return View(objShowAccount);
+        }
+
+        public IActionResult Start(int rate, int typeRate)
+        {
+            bool flag = false;
+            if (rate > objShowAccount.player.Cash)
+            {
+                objShowAccount.Message = "Rate is too large for you";
+                flag = true;
+            }
+            if (rate <= 0)
+            {
+                objShowAccount.Message = "Wrong rate";
+                flag = true;
+            }
+
+            switch (typeRate)
+            {
+                default:
+                    flag = true;
+                    break;
+                case 1:
+                    objShowAccount.player.TypeOfRate = Player.TypeRate.zero;
+                    break;
+                case 2:
+                    objShowAccount.player.TypeOfRate = Player.TypeRate.color;
+                    break;
+                case 3:
+                    objShowAccount.player.TypeOfRate = Player.TypeRate.sector;
+                    break;
+            }
+            if (flag)
+                return RedirectPermanent("ShowAccount");
+            objStart = new AccountStartViewModel(objShowAccount.player);
+            return View(objStart);
+        }
+
+        public IActionResult Cancel()
+        {
+            objStart = null;
+            objShowAccount.player.Rate = 0;
+            objShowAccount.player.TypeOfRate = Player.TypeRate.noth;
+            return RedirectPermanent("ShowAccount");
         }
 
         public IActionResult Log_out()
         {
-            obj.user.CorrectTransition = false;
-            obj.user = null;
+            objShowAccount = null;
             return RedirectToActionPermanent("Index", "Auth");
         }
     }

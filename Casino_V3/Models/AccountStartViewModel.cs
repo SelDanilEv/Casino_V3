@@ -1,18 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Casino_V3.Models
 {
-    public class AccountShowAccountViewModel
+    public class AccountStartViewModel
     {
-        public AccountShowAccountViewModel()
+        public AccountStartViewModel(Player play)
         {
-            player = new Player();
+            player = play;
         }
-
+        
         public Player player;
         public string Message = "";
     }

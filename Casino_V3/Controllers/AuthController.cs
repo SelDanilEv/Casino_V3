@@ -22,9 +22,9 @@ namespace Casino_V3.Controllers
 
         private int returnedId;
 
-        public IActionResult Log_in (string username,string password)
+        public IActionResult Log_in (string playername,string password)
         {
-            returnedId = DataBase.Authorization(username, password);
+            returnedId = DataBase.Authorization(playername, password);
             switch (returnedId)
             {
                 case -2:
@@ -35,8 +35,7 @@ namespace Casino_V3.Controllers
                     break;
                 default:
                     obj.Message = "";
-                    BindClass.userId = returnedId;
-                    DataBase.ActivUsers.ToArray()[returnedId].CorrectTransition = true;
+                    BindClass.playerId = returnedId;
                     //return  RedirectToPage("Account");
                     return RedirectToActionPermanent("ShowAccount", "Account");
                     //return RedirectPermanent("/Account/ShowAccount");
@@ -46,13 +45,13 @@ namespace Casino_V3.Controllers
 
         public async void Serialize()
         {
-            await Task.Run(() => DataBase.Serialize("UsersFile", DataBase.ActivUsers));
+            await Task.Run(() => DataBase.Serialize("PlayersFile", DataBase.ActivPlayers));
         }
 
-        public IActionResult Log_on(string username, string password)
+        public IActionResult Log_on(string playername, string password)
         {
-            User user = new User(username, password, 1000);
-            bool flag = DataBase.AddUser(user);
+            Player player = new Player(playername, password, 1000);
+            bool flag = DataBase.AddPlayer(player);
             obj = new AuthIndexViewModel();
             if (flag)
             {

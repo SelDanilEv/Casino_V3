@@ -51,7 +51,7 @@ namespace Casino_V3
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            DataBase.DeSerialize("UsersFile", ref DataBase.ActivUsers);
+            DataBase.DeSerialize("PlayersFile", ref DataBase.ActivPlayers);
 
             app.UseMvc(routes =>
             {
