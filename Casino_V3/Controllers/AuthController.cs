@@ -11,36 +11,55 @@ namespace Casino_V3.Controllers
 {
     public class AuthController : Controller
     {
-        private static AuthIndexViewModel obj;
+        private static List<AuthIndexViewModel> obj = new List<AuthIndexViewModel>() { new AuthIndexViewModel() };
+        private static int counterObj = 0;
+        private static bool standart = true;
+        private int returnedId;
+
 
         public IActionResult Index()
         {
-            if (obj == null)
-                obj = new AuthIndexViewModel();
-            return View(obj);
+            return View(obj[counterObj]);
         }
 
-        private int returnedId;
-
-        public IActionResult Log_in (string playername,string password)
+        public IActionResult Log_out()
         {
+            counterObj = 0;
+            return RedirectToAction("Index", "Auth");
+        }
+
+        public IActionResult Log_in(string playername, string password)
+        {
+            bool toIndex = true;
+            AuthIndexViewModel localobj = new AuthIndexViewModel();
             returnedId = DataBase.Authorization(playername, password);
             switch (returnedId)
             {
                 case -2:
-                    obj.Message = "Invalid Login";
+                    localobj.Message = "Invalid Login";
                     break;
                 case -1:
-                    obj.Message = "Invalid Password or Login";
+                    localobj.Message = "Invalid Password or Login";
                     break;
                 default:
-                    obj.Message = "";
+                    localobj.Message = "";
+                    toIndex = false;
                     BindClass.playerId = returnedId;
-                    //return  RedirectToPage("Account");
-                    return RedirectToActionPermanent("ShowAccount", "Account");
-                    //return RedirectPermanent("/Account/ShowAccount");
+                    break;
             }
-            return RedirectPermanent("Index");
+
+            counterObj = -1;
+            counterObj = obj.FindIndex((x) => x.Message == localobj.Message);
+            if (counterObj == -1)
+            {
+                obj.Add(localobj);
+                counterObj = obj.Count - 1;
+            }
+
+            if (toIndex)
+                return RedirectPermanent("Index");
+            else
+                return RedirectToActionPermanent("ShowAccount", "Account");
         }
 
         public async void Serialize()
@@ -52,13 +71,22 @@ namespace Casino_V3.Controllers
         {
             Player player = new Player(playername, password, 1000);
             bool flag = DataBase.AddPlayer(player);
-            obj = new AuthIndexViewModel();
+            AuthIndexViewModel localobj = new AuthIndexViewModel();
             if (flag)
             {
-                obj.Message = "Account was created";
+                localobj.Message = "Account was created";
                 Serialize();
             }
-            else obj.Message = "This name was occupied";
+            else localobj.Message = "This name was occupied";
+
+            counterObj = -1;
+            counterObj = obj.FindIndex((x) => x.Message == localobj.Message);
+            if (counterObj == -1)
+            {
+                obj.Add(localobj);
+                counterObj = obj.Count - 1;
+            }
+
             return RedirectToAction("Index", "Auth");
         }
     }

@@ -8,42 +8,65 @@ using Microsoft.AspNetCore.Http;
 
 namespace Casino_V3.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : Controller        //привести все в порядок согласование об изменении
     {
-        private static AccountShowAccountViewModel objShowAccount;
-        private static AccountStartViewModel objStart;
+        private static List<AccountShowAccountViewModel> objShowAccount = new List<AccountShowAccountViewModel>() { };
+        private static List<AccountStartViewModel> objStart = new List<AccountStartViewModel>() { };
+        private static int counterObjShowAccount = -1;
+        private static int counterObjStart = -1;
 
-        public int? PlayerId;
 
         public IActionResult ShowAccount()
         {
-            PlayerId = BindClass.playerId;
+            int? PlayerId = BindClass.playerId;
             BindClass.playerId = null;
+
+            AccountShowAccountViewModel localobjShowAccount = new AccountShowAccountViewModel();
 
             if (PlayerId != null)
             {
-                objShowAccount = new AccountShowAccountViewModel();
-                objShowAccount.player = DataBase.ActivPlayers[(int)PlayerId];
+                localobjShowAccount.player = DataBase.ActivPlayers[(int)PlayerId];
+                counterObjShowAccount = -1;
+                counterObjShowAccount = objShowAccount.FindIndex((x) => x.player.Name == localobjShowAccount.player.Name);
+                if (counterObjShowAccount == -1)
+                {
+                    objShowAccount.Add(localobjShowAccount);
+                    counterObjShowAccount = objShowAccount.Count - 1;
+                }
+                objShowAccount[counterObjShowAccount] = localobjShowAccount;
+                counterObjShowAccount = -1;
             }
             else
             {
-                if (objShowAccount == null)
+                if (counterObjShowAccount >= 0)
+                {
+                    localobjShowAccount = objShowAccount[counterObjShowAccount];
+                    localobjShowAccount.player = DataBase.ActivPlayers[localobjShowAccount.player.Id];
+                    objShowAccount[counterObjShowAccount] = localobjShowAccount;
+                    counterObjShowAccount=-1;
+                }
+                else
                     return RedirectToActionPermanent("Log_out", "Account");
             }
-            return View(objShowAccount);
+            return View(localobjShowAccount);
         }
 
-        public IActionResult Start(int rate, int typeRate)
+        public IActionResult Start(int rate, int typeRate,int id)
         {
+            AccountShowAccountViewModel localobjShowAccount = new AccountShowAccountViewModel();
+            string name = DataBase.ActivPlayers[id].Name;
+            counterObjShowAccount = objShowAccount.FindIndex((x) => x.player.Name == name);
+            localobjShowAccount = objShowAccount[counterObjShowAccount];
+
             bool flag = false;
-            if (rate > objShowAccount.player.Cash)
+            if (rate > localobjShowAccount.player.Cash)
             {
-                objShowAccount.Message = "Rate is too large for you";
+                localobjShowAccount.Message = "Rate is too large for you";
                 flag = true;
             }
             if (rate <= 0)
             {
-                objShowAccount.Message = "Wrong rate";
+                localobjShowAccount.Message = "Wrong rate";
                 flag = true;
             }
 
@@ -53,33 +76,49 @@ namespace Casino_V3.Controllers
                     flag = true;
                     break;
                 case 1:
-                    objShowAccount.player.TypeOfRate = Player.TypeRate.zero;
+                    localobjShowAccount.player.TypeOfRate = Player.TypeRate.zero;
                     break;
                 case 2:
-                    objShowAccount.player.TypeOfRate = Player.TypeRate.color;
+                    localobjShowAccount.player.TypeOfRate = Player.TypeRate.color;
                     break;
                 case 3:
-                    objShowAccount.player.TypeOfRate = Player.TypeRate.sector;
+                    localobjShowAccount.player.TypeOfRate = Player.TypeRate.sector;
                     break;
             }
             if (flag)
+            {
+                counterObjShowAccount = objShowAccount.FindIndex((x) => x.player.Name == DataBase.ActivPlayers[id].Name);
                 return RedirectPermanent("ShowAccount");
-            objStart = new AccountStartViewModel(objShowAccount.player);
-            return View(objStart);
+            }
+            localobjShowAccount.player.Rate = rate;
+
+            AccountStartViewModel localobjStart = new AccountStartViewModel(localobjShowAccount.player);
+            counterObjStart = -1;
+            counterObjStart = objStart.FindIndex((x) => x.player.Name == localobjStart.player.Name);
+            if (counterObjStart == -1)
+            {
+                objStart.Add(localobjStart);
+                counterObjStart = objStart.Count - 1;
+            }
+            return View(localobjStart);
         }
 
-        public IActionResult Cancel()
+        public IActionResult Cancel(int id)
         {
-            objStart = null;
-            objShowAccount.player.Rate = 0;
-            objShowAccount.player.TypeOfRate = Player.TypeRate.noth;
+            AccountShowAccountViewModel localobjShowAccount = new AccountShowAccountViewModel();
+            string name = DataBase.ActivPlayers[id].Name;
+            counterObjShowAccount = objShowAccount.FindIndex((x) => x.player.Name == name);
+            localobjShowAccount = objShowAccount[counterObjShowAccount];
+            localobjShowAccount.player.Rate = 0;
+            localobjShowAccount.player.TypeOfRate = Player.TypeRate.noth;
+            counterObjShowAccount = objShowAccount.FindIndex((x) => x.player.Name == DataBase.ActivPlayers[id].Name);
+            objShowAccount[counterObjShowAccount] = localobjShowAccount;
             return RedirectPermanent("ShowAccount");
         }
 
         public IActionResult Log_out()
         {
-            objShowAccount = null;
-            return RedirectToActionPermanent("Index", "Auth");
+            return RedirectToActionPermanent("Log_out", "Auth");
         }
     }
 }

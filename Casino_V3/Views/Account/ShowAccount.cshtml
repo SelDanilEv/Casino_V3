@@ -25,6 +25,7 @@
         </select>
     </div>
     <div>@Model.Message</div>
-    <button style="margin-left:10px" asp-action="Start" asp-route-rate="rate" asp-route-typeRate="typeRate">Start</button>
+    <button style="margin-left:10px" asp-action="Start" asp-route-rate="rate" asp-route-typeRate="typeRate" asp-route-id="id">Start</button>
     <button style="margin-left:10px" asp-action="Log_out">Log out</button>
+    <input hidden="hidden" name="id" value="@Model.player.Id" />
 </form>
